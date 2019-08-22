@@ -56,15 +56,29 @@
           this.onChange = this.onChange.bind(this);
         }
 
-        onChange(company, followed, rating){
-          console.log('hi')
+        async onChange(company, followed, rating) {
+          if (followed) {
+            if (rating) {
+              let updateFollow = await (axios.put(`${API}/users/${this.state.user.id}/followingCompanies/${followed.id}`, { rating: `${ rating }` }));
+              const following = await (axios.get(`${API}/users/${this.state.user.id}/followingCompanies`)).data
+              console.log('update it');
+              this.setState(updateFollow);
+            }
+            else {
+              //delete
+              console.log('delete it')
+            }
+          } else {
+            //axios.post
+            console.log('create it')
+          }
+          this.setState({ company, followed, rating })
         }
         async componentDidMount(){
           const user = await fetchUser();
           const companies = (await axios.get(`${API}/companies`)).data;
           const following = (await axios.get(`${API}/users/${user.id}/followingCompanies`)).data;
           this.setState({ user, companies, following });
-
         }
         render(){
           const { user, companies, following } = this.state;
