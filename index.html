@@ -33,11 +33,11 @@
         return  user;
       };
 
-      const CompanyFollowing = ({ company, followed })=>{
+      const CompanyFollowing = ({ company, followed, onChange })=>{
         return(
           <li>
             { company.name}
-            <select value={ followed ? followed.rating : ''}>
+            <select value={ followed ? followed.rating : ''} onChange = {(ev)=>onChange(company, followed, ev.target.value)}>
               {
                 ['', 1, 2, 3, 4, 5].map(num => <option key={ num }>{ num }</option>)
               }
@@ -53,8 +53,12 @@
             companies: [],
             following: []
           };
+          this.onChange = this.onChange.bind(this);
         }
 
+        onChange(company, followed, rating){
+          console.log('hi')
+        }
         async componentDidMount(){
           const user = await fetchUser();
           const companies = (await axios.get(`${API}/companies`)).data;
@@ -64,6 +68,7 @@
         }
         render(){
           const { user, companies, following } = this.state;
+          const { onChange } = this;
           return(
             <div>
               <h1>Welcome {user.fullName}</h1>
@@ -72,6 +77,7 @@
                   companies.map(company => <CompanyFollowing
                   key={ company.id }
                   company={ company }
+                  onChange={ onChange }
                   followed={ following.find(f => f.companyId === company.id) }/>)
                 }
               </ul>
