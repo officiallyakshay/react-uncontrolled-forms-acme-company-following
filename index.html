@@ -33,6 +33,18 @@
         return  user;
       };
 
+      const CompanyFollowing = ({ company })=>{
+        return(
+          <li>
+            { company.name}
+            <select>
+              {
+                ['', 1, 2, 3, 4, 5].map(num => <option key={ num }>{ num }</option>)
+              }
+            </select>
+          </li>
+        );
+      }
       class App extends Component {
         constructor(){
           super();
@@ -45,13 +57,19 @@
 
         async componentDidMount(){
           const user = await fetchUser();
-          this.setState({ user });
+          const companies = (await axios.get(`${API}/companies`)).data;
+          this.setState({ user, companies });
         }
         render(){
-          const { user } = this.state;
+          const { user, companies } = this.state;
           return(
             <div>
               <h1>Welcome {user.fullName}</h1>
+              <ul>
+                {
+                  companies.map(company => <CompanyFollowing key={ company.id } company={ company }/>)
+                }
+              </ul>
             </div>
           );
         }
